@@ -7,8 +7,9 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import 'react-native-gesture-handler';
 
-import Breeds from './pages/BreedsDescription';
+import BreedsDescription from './pages/BreedsDescription';
 import Favorites from './pages/Favorites';
+import Breeds from './pages/Breeds';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
@@ -18,7 +19,7 @@ const Tab = createBottomTabNavigator();
 function MyTabs() {
   return (
     <Tab.Navigator
-      initialRouteName="Favorites"
+      initialRouteName="Breeds"
       screenOptions={({ route }: { route: Route }) => ({
         headerShown: false,
         tabBarIcon: ({
@@ -45,6 +46,7 @@ function MyTabs() {
         tabBarInactiveTintColor: 'gray',
       })}>
       <Tab.Screen name="Home" component={Breeds} />
+      <Tab.Screen name="Home2" component={BreedsDescription} />
       <Tab.Screen name="Favorites" component={Favorites} />
     </Tab.Navigator>
   );
