@@ -19,10 +19,10 @@ export interface Breed {
     height: number;
     url: string;
   };
-  reference_image_id?: string;
+  reference_image_id: string;
 }
 
-export default function App() {
+export default function App({ navigation }: { navigation: any }) {
   const [breeds, setBreeds] = useState<Array<Breed>>([]);
 
   useEffect(() => {
@@ -33,23 +33,28 @@ export default function App() {
       .then((data) => setBreeds(data));
   }, []);
   //const images = [];
+  function onPress(breed: Breed) {
+    navigation.navigate('BreedsDescription', { id: breed.id });
+  }
 
   return (
     <ScrollView style={styles.container}>
       {breeds.map((breed) => (
-        <View style={[styles.breed, styles.shadow]}>
+        <TouchableOpacity
+          style={[styles.breed, styles.shadow]}
+          onPress={() => onPress(breed)}>
           <View style={{ width: '40%', height: '100%' }}>
             <View style={styles.image}>
               <Image style={styles.image} source={{ uri: breed.image.url }} />
             </View>
           </View>
-          <View style={{ left: '40%', width: '60%', height: '100%' }}>
+          <View style={{ width: '60%', height: '100%' }}>
             <View>
               <Text>{breed.name}</Text>
               <Text>{breed.bred_for}</Text>
             </View>
           </View>
-        </View>
+        </TouchableOpacity>
       ))}
     </ScrollView>
   );
@@ -72,6 +77,8 @@ const styles = StyleSheet.create({
     height: 130,
     marginBottom: 10,
     borderRadius: 16,
+    flexDirection: 'row',
+    flex: 1,
   },
   shadow: {
     shadowColor: '#000',

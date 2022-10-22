@@ -10,18 +10,48 @@ import {
 } from 'react-native';
 import { Breed } from '../Breeds';
 
-const id = 123;
+let id = 12;
 
-export default function App() {
+export default function App({ route }: { route: any }) {
   const [breed, setBreed] = useState<Breed>({} as any);
 
-  useEffect(() => {
+  function appData() {
     fetch(`https://api.thedogapi.com/v1/breeds/${id}`)
       .then((response) => response.json())
       .then((data) => {
         console.log(data), setBreed(data);
       });
+  }
+
+  useEffect(() => {
+    appData();
   }, []);
+
+  useEffect(() => {
+    if (route.params?.id) {
+      id = route.params.id;
+      appData();
+    }
+  }, [route.params?.id]);
+
+  const saveImageInFavourites = async (imageId: string) => {
+    const url = 'favourites';
+
+    try {
+      const response = await fetch('https://api.thedogapi.com/v1/favourites', {
+        method: 'POST',
+        body: JSON.stringify({ image_id: imageId }),
+        headers:{
+          "x-api-key":"live_WKwBaLUZriMPf0Qme8HLRYBJxJ7NxxC2o2LJRvjHjkPq1zMWPMFpPwykF9UTILYL",
+        "content-type":"application/json"
+        }
+
+      });
+      console.log('response', response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -45,6 +75,7 @@ export default function App() {
             <Text style={styles.buttonText}>Другое фото</Text>
           </TouchableOpacity>
           <TouchableOpacity
+            onPress={() => saveImageInFavourites(breed.reference_image_id)}
             style={[styles.button, styles.shadow, styles.margin]}>
             <Text style={styles.buttonText}>Добавить в избранное</Text>
           </TouchableOpacity>

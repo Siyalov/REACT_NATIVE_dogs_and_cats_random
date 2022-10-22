@@ -35,10 +35,12 @@ function MyTabs() {
         }) => {
           let iconName;
           // https://ionic.io/ionicons
-          if (route.name === 'Home') {
+          if (route.name === 'Breeds') {
             iconName = 'md-home';
           } else if (route.name === 'Favorites') {
             iconName = 'md-heart';
+          } else if (route.name === 'BreedsDescription') {
+            iconName = 'information-outline';
           } else {
             iconName = 'md-apps-outline';
           }
@@ -47,8 +49,8 @@ function MyTabs() {
         tabBarActiveTintColor: 'blue',
         tabBarInactiveTintColor: 'gray',
       })}>
-      <Tab.Screen name="Home" component={Breeds} />
-      <Tab.Screen name="Home2" component={BreedsDescription} />
+      <Tab.Screen name="Breeds" component={Breeds} />
+      <Tab.Screen name="BreedsDescription" component={BreedsDescription} />
       <Tab.Screen name="Favorites" component={Favorites} />
     </Tab.Navigator>
   );
