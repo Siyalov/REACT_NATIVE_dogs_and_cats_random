@@ -1,9 +1,10 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Route, Text, View } from 'react-native';
 import { Checkbox, Button } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+
 
 import 'react-native-gesture-handler';
 
@@ -17,6 +18,7 @@ import { Ionicons } from '@expo/vector-icons';
 const Tab = createBottomTabNavigator();
 
 function MyTabs() {
+
   return (
     <Tab.Navigator
       initialRouteName="Breeds"
@@ -53,6 +55,12 @@ function MyTabs() {
 }
 
 export default function App() {
+  useEffect(()=> {
+fetch('https://sb-cats.herokuapp.com/api/2/<Siyalov>/show')
+  .then((response) => response.json())
+  .then((data) => console.log(data.data));
+
+},[])
   return (
     <NavigationContainer>
       <MyTabs />

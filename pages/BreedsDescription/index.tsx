@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+
 import {
   Text,
   View,
@@ -7,26 +8,44 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
+import { Breed } from '../Breeds';
 
-const SKREEN_WIDTH = Dimensions.get('window').width;
+const id = 123;
 
 export default function App() {
+  const [breed, setBreed] = useState<Breed>({} as any);
+
+  useEffect(() => {
+    fetch(`https://api.thedogapi.com/v1/breeds/${id}`)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data), setBreed(data);
+      });
+  }, []);
+
   return (
     <View style={styles.container}>
       <View style={[styles.image, styles.shadow]}>
         <View style={styles.circle} />
-        <Image style={styles.image} source={require('../../dogPNG503671.png')} />
+        <Image
+          style={styles.image}
+          source={{
+            uri:
+              'https://cdn2.thedogapi.com/images/' +
+              breed.reference_image_id +
+              '.jpg',
+          }}
+        />
       </View>
-      <Text style={styles.header}>Pomeranian</Text>
-      <Text style={styles.content}>
-        Taking care of a pet is my favorite, it helps me to...
-      </Text>
+      <Text style={styles.header}>{breed.name}</Text>
+      <Text style={styles.content}>{breed.bred_for}</Text>
       <View style={styles.buttonContainer}>
         <View style={styles.buttons}>
           <TouchableOpacity style={[styles.button, styles.shadow]}>
             <Text style={styles.buttonText}>Другое фото</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.button, styles.shadow, styles.margin]}>
+          <TouchableOpacity
+            style={[styles.button, styles.shadow, styles.margin]}>
             <Text style={styles.buttonText}>Добавить в избранное</Text>
           </TouchableOpacity>
         </View>
@@ -63,7 +82,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   button: {
-    paddingHorizontal:10,
+    paddingHorizontal: 10,
     paddingVertical: 10,
     borderRadius: 12,
     backgroundColor: 'white',
@@ -98,7 +117,7 @@ const styles = StyleSheet.create({
     right: 10,
     zIndex: 10,
   },
-  margin:{
-    marginLeft:10,
+  margin: {
+    marginLeft: 10,
   },
 });

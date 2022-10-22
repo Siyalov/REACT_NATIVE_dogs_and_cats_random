@@ -1,18 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Text,
   View,
   StyleSheet,
   Image,
   TouchableOpacity,
-  Dimensions,
   ScrollView,
 } from 'react-native';
-import axios from 'axios';
 
-const SKREEN_WIDTH = Dimensions.get('window').width;
-
-interface Breed {
+export interface Breed {
   id: number;
   name: string;
   bred_for: string;
@@ -23,28 +19,34 @@ interface Breed {
     height: number;
     url: string;
   };
+  reference_image_id?: string;
 }
 
 export default function App() {
   const [breeds, setBreeds] = useState<Array<Breed>>([]);
 
-  axios.get('https://api.thedogapi.com/v1/breeds', ).then((res)=> {
-    const data: Array<Breed> = res.data;
-    setBreeds(data)
-  })
+  useEffect(() => {
+    fetch(
+      'https://api.thedogapi.com/v1/breeds?breeds_id=Pomeranian&include_breeds=false'
+    )
+      .then((response) => response.json())
+      .then((data) => setBreeds(data));
+  }, []);
+  //const images = [];
 
-  const images = [
-    require('../../dogPNG503671.png'),
-    require('../../dogPNG503671.png'),
-    require('../../dogPNG503671.png'),
-  ];
   return (
     <ScrollView style={styles.container}>
-      {images.map((image) => (
+      {breeds.map((breed) => (
         <View style={[styles.breed, styles.shadow]}>
           <View style={{ width: '40%', height: '100%' }}>
             <View style={styles.image}>
-              <Image style={styles.image} source={image} />
+              <Image style={styles.image} source={{ uri: breed.image.url }} />
+            </View>
+          </View>
+          <View style={{ left: '40%', width: '60%', height: '100%' }}>
+            <View>
+              <Text>{breed.name}</Text>
+              <Text>{breed.bred_for}</Text>
             </View>
           </View>
         </View>

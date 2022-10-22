@@ -8,10 +8,11 @@ import {
   Dimensions,
 } from 'react-native';
 
-const SKREEN_WIDTH = Dimensions.get('window').width;
-
 export default function App() {
-  const images = [require('../../dogPNG503671.png'),require( '../../dogPNG503671.png')];
+  const images = [
+    require('../../dogPNG503671.png'),
+    require('../../dogPNG503671.png'),
+  ];
   return (
     <View style={styles.container}>
       {images.map((image) => (
