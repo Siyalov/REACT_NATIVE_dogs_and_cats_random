@@ -49,9 +49,9 @@ export default function App({ navigation }: { navigation: any }) {
             </View>
           </View>
           <View style={{ width: '60%', height: '100%' }}>
-            <View>
-              <Text>{breed.name}</Text>
-              <Text>{breed.bred_for}</Text>
+            <View style={styles.breedBlock}>
+              <Text style={styles.breedName}>{breed.name}</Text>
+              <Text style={styles.breedText}>{breed.bred_for}</Text>
             </View>
           </View>
         </TouchableOpacity>
@@ -79,6 +79,19 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     flexDirection: 'row',
     flex: 1,
+  },
+  breedBlock: {
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    height: '100%',
+    paddingVertical: 16,
+    marginLeft: 6,
+  },
+  breedName: {
+    fontWeight: "bold",
+  },
+  breedText:{
+ fontSize: 12,
   },
   shadow: {
     shadowColor: '#000',

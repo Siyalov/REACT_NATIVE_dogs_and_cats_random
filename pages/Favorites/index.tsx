@@ -8,26 +8,12 @@ import {
   Dimensions,
 ScrollView,
 } from 'react-native';
+import { BreedsContext } from '../../App';
 import { Breed } from '../Breeds';
 
-export default function App() {
-  const [breeds, setBreeds] = useState<Array<Breed>>([]);
-  useEffect(() => {
-    fetch('https://api.thedogapi.com/v1/favourites', {
-      headers: {
-        'x-api-key':
-          'live_WKwBaLUZriMPf0Qme8HLRYBJxJ7NxxC2o2LJRvjHjkPq1zMWPMFpPwykF9UTILYL',
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {data.reverse(); setBreeds(data)});
-  }, []);
-  //const images = [];
-
-  // const images = [
-  //   require('../../dogPNG503671.png'),
-  //   require('../../dogPNG503671.png'),
-  // ];
+export default function Favorites() {
+  const {breeds} = React.useContext(BreedsContext) 
+ 
 
   return (
     <ScrollView style={styles.container}>

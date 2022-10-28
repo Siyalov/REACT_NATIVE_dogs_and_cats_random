@@ -8,18 +8,20 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
+import { BreedsContext } from '../../App';
 import { Breed } from '../Breeds';
 
 let id = 12;
 
+
 export default function App({ route }: { route: any }) {
   const [breed, setBreed] = useState<Breed>({} as any);
-
+const {changeFavorites} = React.useContext(BreedsContext) 
   function appData() {
     fetch(`https://api.thedogapi.com/v1/breeds/${id}`)
       .then((response) => response.json())
       .then((data) => {
-        console.log(data), setBreed(data);
+       setBreed(data)
       });
   }
 
@@ -34,23 +36,37 @@ export default function App({ route }: { route: any }) {
     }
   }, [route.params?.id]);
 
-  const saveImageInFavourites = async (imageId: string) => {
-    const url = 'favourites';
-
-    try {
-      const response = await fetch('https://api.thedogapi.com/v1/favourites', {
+  const saveImageInFavourites = (id: string) => {
+    // const url = 'favourites';
+    console.log(id)
+    
+      fetch('https://api.thedogapi.com/v1/favourites', {
         method: 'POST',
-        body: JSON.stringify({ image_id: imageId }),
+        body: JSON.stringify({image_id:id}),
         headers:{
           "x-api-key":"live_WKwBaLUZriMPf0Qme8HLRYBJxJ7NxxC2o2LJRvjHjkPq1zMWPMFpPwykF9UTILYL",
         "content-type":"application/json"
         }
 
+      })
+      .then(res => {
+        return res.json()
+        })
+      .then(res => {
+         fetch('https://api.thedogapi.com/v1/favourites', {
+      headers: {
+        'x-api-key':
+          'live_WKwBaLUZriMPf0Qme8HLRYBJxJ7NxxC2o2LJRvjHjkPq1zMWPMFpPwykF9UTILYL',
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        data.reverse();
+        changeFavorites(data);
       });
-      console.log('response', response);
-    } catch (error) {
-      console.log(error);
-    }
+      })
+    .catch(e => {console.log(e)})
+    
   };
 
   return (

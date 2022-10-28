@@ -5,12 +5,11 @@ import { Checkbox, Button } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-
 import 'react-native-gesture-handler';
 
 import BreedsDescription from './pages/BreedsDescription';
 import Favorites from './pages/Favorites';
-import Breeds from './pages/Breeds';
+import Breeds, { Breed } from './pages/Breeds';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
@@ -18,7 +17,6 @@ import { Ionicons } from '@expo/vector-icons';
 const Tab = createBottomTabNavigator();
 
 function MyTabs() {
-
   return (
     <Tab.Navigator
       initialRouteName="Breeds"
@@ -54,18 +52,39 @@ function MyTabs() {
       <Tab.Screen name="Favorites" component={Favorites} />
     </Tab.Navigator>
   );
+} 
+interface IBreedsContext {
+  breeds:Breed[], 
+  changeFavorites:(data:Breed[]) => void 
 }
-
+export const BreedsContext = React.createContext<IBreedsContext>({
+ breeds:[], 
+ changeFavorites(): void{} 
+});
 export default function App() {
-  useEffect(()=> {
-fetch('https://sb-cats.herokuapp.com/api/2/<Siyalov>/show')
-  .then((response) => response.json())
-  .then((data) => console.log(data.data));
+  const [breeds, setBreeds] = useState<Array<Breed>>([]);
+  const changeFavorites= (data:Breed[]) => { 
+    setBreeds(data)
 
-},[])
+  }   
+  useEffect(() => {
+    fetch('https://api.thedogapi.com/v1/favourites', {
+      headers: {
+        'x-api-key':
+          'live_WKwBaLUZriMPf0Qme8HLRYBJxJ7NxxC2o2LJRvjHjkPq1zMWPMFpPwykF9UTILYL',
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        data.reverse();
+        setBreeds(data);
+      });
+  }, []);
   return (
-    <NavigationContainer>
-      <MyTabs />
-    </NavigationContainer>
+    <BreedsContext.Provider value={{ breeds, changeFavorites }}>
+      <NavigationContainer>
+        <MyTabs />
+      </NavigationContainer>
+    </BreedsContext.Provider>
   );
 }
