@@ -12,16 +12,24 @@ import { BreedsContext } from '../../App';
 import { Breed } from '../Breeds';
 
 let id = 12;
-
+export interface BreedImage {
+  id: string;
+  url: string;
+  width: number;
+  height: number;
+}
+const getNumber = (max: number, min = 0) =>
+  Math.floor(Math.random() * (max - min) + min);
 
 export default function App({ route }: { route: any }) {
+  const [breedPhotos, setBreedPhotos] = useState<BreedImage[]>([]);
   const [breed, setBreed] = useState<Breed>({} as any);
-const {changeFavorites} = React.useContext(BreedsContext) 
+  const { changeFavorites } = React.useContext(BreedsContext);
   function appData() {
     fetch(`https://api.thedogapi.com/v1/breeds/${id}`)
       .then((response) => response.json())
       .then((data) => {
-       setBreed(data)
+        setBreed(data);
       });
   }
 
@@ -36,37 +44,70 @@ const {changeFavorites} = React.useContext(BreedsContext)
     }
   }, [route.params?.id]);
 
+  const otherPhotosFavorite = (id: number) => {
+    // const url = 'favourites';
+    console.log(id);
+    fetch(
+      `https://api.thedogapi.com/v1/images/search?breed_id=${id}&limit=50`,
+      {
+        method: 'GET',
+        headers: {
+          'x-api-key':
+            'live_WKwBaLUZriMPf0Qme8HLRYBJxJ7NxxC2o2LJRvjHjkPq1zMWPMFpPwykF9UTILYL',
+        },
+      }
+    )
+      .then((res) => {
+        return res.json();
+      })
+      .then((data: Array<BreedImage>) => {
+        let cnt = data.length;
+        const num = getNumber(cnt);
+
+        const newImage = data[num];
+        breed.image = newImage;
+        breed.reference_image_id = newImage.id;
+        setBreed(breed);  
+        console.log(data);
+        setBreedPhotos(data)
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
   const saveImageInFavourites = (id: string) => {
     // const url = 'favourites';
-    console.log(id)
-    
-      fetch('https://api.thedogapi.com/v1/favourites', {
-        method: 'POST',
-        body: JSON.stringify({image_id:id}),
-        headers:{
-          "x-api-key":"live_WKwBaLUZriMPf0Qme8HLRYBJxJ7NxxC2o2LJRvjHjkPq1zMWPMFpPwykF9UTILYL",
-        "content-type":"application/json"
-        }
+    console.log(id);
 
-      })
-      .then(res => {
-        return res.json()
-        })
-      .then(res => {
-         fetch('https://api.thedogapi.com/v1/favourites', {
+    fetch('https://api.thedogapi.com/v1/favourites', {
+      method: 'POST',
+      body: JSON.stringify({ image_id: id }),
       headers: {
         'x-api-key':
           'live_WKwBaLUZriMPf0Qme8HLRYBJxJ7NxxC2o2LJRvjHjkPq1zMWPMFpPwykF9UTILYL',
+        'content-type': 'application/json',
       },
     })
-      .then((response) => response.json())
-      .then((data) => {
-        data.reverse();
-        changeFavorites(data);
-      });
+      .then((res) => {
+        return res.json();
       })
-    .catch(e => {console.log(e)})
-    
+      .then((res) => {
+        fetch('https://api.thedogapi.com/v1/favourites', {
+          headers: {
+            'x-api-key':
+              'live_WKwBaLUZriMPf0Qme8HLRYBJxJ7NxxC2o2LJRvjHjkPq1zMWPMFpPwykF9UTILYL',
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            data.reverse();
+            changeFavorites(data);
+          });
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
   return (
@@ -87,7 +128,9 @@ const {changeFavorites} = React.useContext(BreedsContext)
       <Text style={styles.content}>{breed.bred_for}</Text>
       <View style={styles.buttonContainer}>
         <View style={styles.buttons}>
-          <TouchableOpacity style={[styles.button, styles.shadow]}>
+          <TouchableOpacity
+            onPress={() => otherPhotosFavorite(breed.id)}
+            style={[styles.button, styles.shadow]}>
             <Text style={styles.buttonText}>Другое фото</Text>
           </TouchableOpacity>
           <TouchableOpacity
